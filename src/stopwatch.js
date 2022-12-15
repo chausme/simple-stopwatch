@@ -5,6 +5,8 @@ class Stopwatch {
 
     #interval;
 
+    #is_started = false;
+
     #timeEl = document.querySelector('.time');
 
     #actions = ['start', 'stop', 'reset'];
@@ -28,31 +30,59 @@ class Stopwatch {
     };
 
     start = () => {
-        this.#btns['start'].setAttribute('disabled', 'disabled');
-        this.#btns['stop'].removeAttribute('disabled');
-        this.#interval = setInterval(() => {
-            this.#durationMs += 100;
-            // get seconds with milliseconds for output
-            this.#timerDuration = `${Math.floor(this.#durationMs / 1000)}.${
-                (this.#durationMs % 1000) / 100
-            }`;
-            this.#timeEl.textContent = this.#timerDuration;
-        }, 100);
+        try {
+            if (this.#is_started) {
+                throw new Error('Stopwatch already started');
+            }
+            // start and set interval
+            this.#interval = setInterval(() => {
+                this.#durationMs += 100;
+                // get seconds with milliseconds for output
+                this.#timerDuration = `${Math.floor(this.#durationMs / 1000)}.${
+                    (this.#durationMs % 1000) / 100
+                }`;
+                this.#timeEl.textContent = this.#timerDuration;
+            }, 100);
+            this.#is_started = true;
+            // update action buttons
+            this.#btns['start'].setAttribute('disabled', 'disabled');
+            this.#btns['stop'].removeAttribute('disabled');
+        } catch (e) {
+            console.error(e);
+        }
     };
 
     stop = () => {
-        clearInterval(this.#interval);
-        this.#btns['start'].removeAttribute('disabled');
-        this.#btns['stop'].setAttribute('disabled', 'disabled');
+        try {
+            if (!this.#is_started) {
+                throw new Error('Stopwatch is stopped already');
+            }
+            // stop and remove interval
+            clearInterval(this.#interval);
+            this.#is_started = false;
+            // update action buttons
+            this.#btns['start'].removeAttribute('disabled');
+            this.#btns['stop'].setAttribute('disabled', 'disabled');
+        } catch (e) {
+            console.error(e);
+        }
     };
 
     reset = () => {
-        this.stop();
-        this.#timerDuration = 0;
-        this.#durationMs = 0;
-        this.#timeEl.textContent = '0.0';
-        this.#btns['start'].removeAttribute('disabled');
-        this.#btns['stop'].removeAttribute('disabled');
+        try {
+            // stop and remove interval
+            clearInterval(this.#interval);
+            this.#is_started = false;
+            // reset to defaults
+            this.#timerDuration = 0;
+            this.#durationMs = 0;
+            this.#timeEl.textContent = '0.0';
+            // update action buttons
+            this.#btns['start'].removeAttribute('disabled');
+            this.#btns['stop'].removeAttribute('disabled');
+        } catch (e) {
+            console.error(e);
+        }
     };
 }
 
