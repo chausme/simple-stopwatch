@@ -28,15 +28,17 @@ class Stopwatch {
             if (this.#is_started) {
                 throw new Error('Stopwatch already started');
             }
-            let timerOutput;
             // start and set interval
             this.#interval = setInterval(() => {
                 this.#duration += 100;
-                // get seconds with milliseconds for output
-                timerOutput = `${Math.floor(this.#duration / 1000)}.${
-                    (this.#duration % 1000) / 100
-                }`;
-                this.#timeEl.textContent = timerOutput;
+                // get minutes
+                let minutes = this.#duration / 1000 / 60;
+                // output time
+                this.#timeEl.innerHTML = `${
+                    minutes > 1 ? `${Math.floor(minutes)}<span>m</span>` : ''
+                }${Math.floor(
+                    minutes > 1 ? (this.#duration % (60 * 1000)) / 1000 : this.#duration / 1000
+                )}.${(this.#duration % 1000) / 100}<span>s</span>`;
             }, 100);
             this.#is_started = true;
             // update action buttons
@@ -70,7 +72,7 @@ class Stopwatch {
             this.#is_started = false;
             // reset to defaults
             this.#duration = 0;
-            this.#timeEl.textContent = '0.0';
+            this.#timeEl.innerHTML = '0.0<span>s</span>';
             // update action buttons
             this.#btns['start'].removeAttribute('disabled');
             this.#btns['stop'].removeAttribute('disabled');
