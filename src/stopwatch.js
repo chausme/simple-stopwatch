@@ -1,7 +1,5 @@
 class Stopwatch {
-    #timerDuration = 0;
-
-    #durationMs = 0;
+    #duration = 0;
 
     #interval;
 
@@ -19,10 +17,6 @@ class Stopwatch {
         []
     );
 
-    get duration() {
-        return this.timerDuration;
-    }
-
     init = () => {
         for (const [action, el] of Object.entries(this.#btns)) {
             el.addEventListener('click', this[action]);
@@ -34,14 +28,15 @@ class Stopwatch {
             if (this.#is_started) {
                 throw new Error('Stopwatch already started');
             }
+            let timerOutput;
             // start and set interval
             this.#interval = setInterval(() => {
-                this.#durationMs += 100;
+                this.#duration += 100;
                 // get seconds with milliseconds for output
-                this.#timerDuration = `${Math.floor(this.#durationMs / 1000)}.${
-                    (this.#durationMs % 1000) / 100
+                timerOutput = `${Math.floor(this.#duration / 1000)}.${
+                    (this.#duration % 1000) / 100
                 }`;
-                this.#timeEl.textContent = this.#timerDuration;
+                this.#timeEl.textContent = timerOutput;
             }, 100);
             this.#is_started = true;
             // update action buttons
@@ -74,8 +69,7 @@ class Stopwatch {
             clearInterval(this.#interval);
             this.#is_started = false;
             // reset to defaults
-            this.#timerDuration = 0;
-            this.#durationMs = 0;
+            this.#duration = 0;
             this.#timeEl.textContent = '0.0';
             // update action buttons
             this.#btns['start'].removeAttribute('disabled');
