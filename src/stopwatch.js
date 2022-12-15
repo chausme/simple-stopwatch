@@ -7,26 +7,29 @@ class Stopwatch {
 
     #timeEl = document.querySelector('.time');
 
-    #btnStart = document.querySelector('.actions .btn[data-action="start"]');
+    #actions = ['start', 'stop', 'reset'];
 
-    #btnStop = document.querySelector('.actions .btn[data-action="stop"]');
-
-    #btnReset = document.querySelector('.actions .btn[data-action="reset"]');
+    #btns = this.#actions.reduce(
+        (acc = {}, action) => ({
+            ...acc,
+            [action]: document.querySelector(`.actions .btn[data-action="${action}"]`),
+        }),
+        []
+    );
 
     get duration() {
         return this.timerDuration;
     }
 
     init = () => {
-        // @todo refactor
-        this.#btnStart.addEventListener('click', this.start);
-        this.#btnStop.addEventListener('click', this.stop);
-        this.#btnReset.addEventListener('click', this.reset);
+        for (const [action, el] of Object.entries(this.#btns)) {
+            el.addEventListener('click', this[action]);
+        }
     };
 
     start = () => {
-        this.#btnStart.setAttribute('disabled', 'disabled');
-        this.#btnStop.removeAttribute('disabled');
+        this.#btns['start'].setAttribute('disabled', 'disabled');
+        this.#btns['stop'].removeAttribute('disabled');
         this.#interval = setInterval(() => {
             this.#durationMs += 100;
             // get seconds with milliseconds for output
@@ -39,8 +42,8 @@ class Stopwatch {
 
     stop = () => {
         clearInterval(this.#interval);
-        this.#btnStart.removeAttribute('disabled');
-        this.#btnStop.setAttribute('disabled', 'disabled');
+        this.#btns['start'].removeAttribute('disabled');
+        this.#btns['stop'].setAttribute('disabled', 'disabled');
     };
 
     reset = () => {
@@ -48,8 +51,8 @@ class Stopwatch {
         this.#timerDuration = 0;
         this.#durationMs = 0;
         this.#timeEl.textContent = '0.0';
-        this.#btnStart.removeAttribute('disabled');
-        this.#btnStop.removeAttribute('disabled');
+        this.#btns['start'].removeAttribute('disabled');
+        this.#btns['stop'].removeAttribute('disabled');
     };
 }
 
